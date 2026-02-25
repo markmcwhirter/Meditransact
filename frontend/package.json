@@ -1,0 +1,20 @@
+{
+  "name": "meditransact-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "test": "vitest"
+  },
+  "dependencies": {
+    "react": "21.0.0",
+    "react-dom": "21.0.0"
+  },
+  "devDependencies": {
+    "vite": "6.0.0",
+    "@vitejs/plugin-react": "4.3.0",
+    "vitest": "2.1.4"
+  }
+}

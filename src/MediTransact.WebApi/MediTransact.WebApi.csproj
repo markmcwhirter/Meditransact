@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <LangVersion>14.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="FastEndpoints" Version="5.30.0" />
+    <PackageReference Include="FluentValidation" Version="11.10.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="10.0.0" />
+    <PackageReference Include="OneOf" Version="3.0.271" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="../MediTransact.Application/MediTransact.Application.csproj" />
+    <ProjectReference Include="../MediTransact.Infrastructure/MediTransact.Infrastructure.csproj" />
+  </ItemGroup>
+</Project>

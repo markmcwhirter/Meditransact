@@ -1,0 +1,33 @@
+# Python legacy artifacts
+__pycache__/
+*.pyc
+
+# .NET / C# build artifacts
+[Bb]in/
+[Oo]bj/
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Test and coverage artifacts
+TestResults/
+*.trx
+*.coverage
+*.coveragexml
+coverage/
+
+# NuGet
+*.nupkg
+*.snupkg
+artifacts/
+
+# Node / frontend
+node_modules/
+
+# Local databases and logs
+*.db
+*.sqlite
+*.sqlite3
+*.log
