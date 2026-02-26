@@ -14,6 +14,7 @@ public interface IPracticeRepository
     Task AddChargeCodeTypeAsync(ChargeCodeType chargeCodeType, CancellationToken ct);
     Task AddTenantAsync(Tenant tenant, CancellationToken ct);
     Task AddPracticeLocationAsync(PracticeLocation location, CancellationToken ct);
+    Task AddProviderScheduleTemplateAsync(ProviderScheduleTemplate template, CancellationToken ct);
 
     Task<Patient?> GetPatientAsync(Guid id, CancellationToken ct);
     Task<Provider?> GetProviderAsync(Guid id, CancellationToken ct);
@@ -25,6 +26,7 @@ public interface IPracticeRepository
     Task<ChargeCodeType?> GetChargeCodeTypeAsync(Guid id, CancellationToken ct);
     Task<Tenant?> GetTenantAsync(Guid id, CancellationToken ct);
     Task<PracticeLocation?> GetPracticeLocationAsync(Guid id, CancellationToken ct);
+    Task<ProviderScheduleTemplate?> GetProviderScheduleTemplateAsync(Guid id, CancellationToken ct);
 
     Task<List<Patient>> ListPatientsAsync(CancellationToken ct);
     Task<List<Provider>> ListProvidersAsync(CancellationToken ct);
@@ -36,6 +38,7 @@ public interface IPracticeRepository
     Task<List<ChargeCodeType>> ListChargeCodeTypesAsync(CancellationToken ct);
     Task<List<Tenant>> ListTenantsAsync(CancellationToken ct);
     Task<List<PracticeLocation>> ListPracticeLocationsAsync(Guid tenantId, CancellationToken ct);
+    Task<List<ProviderScheduleTemplate>> ListProviderScheduleTemplatesAsync(Guid providerId, CancellationToken ct);
 
     void RemovePatient(Patient patient);
     void RemoveProvider(Provider provider);
@@ -47,6 +50,7 @@ public interface IPracticeRepository
     void RemoveChargeCodeType(ChargeCodeType chargeCodeType);
     void RemoveTenant(Tenant tenant);
     void RemovePracticeLocation(PracticeLocation location);
+    void RemoveProviderScheduleTemplate(ProviderScheduleTemplate template);
 
     Task SaveChangesAsync(CancellationToken ct);
 }

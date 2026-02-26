@@ -19,6 +19,7 @@ public class PracticeDbContext(DbContextOptions<PracticeDbContext> options) : Db
     public DbSet<ChargeCodeType> ChargeCodeTypes => Set<ChargeCodeType>();
     public DbSet<Tenant> Tenants => Set<Tenant>();
     public DbSet<PracticeLocation> PracticeLocations => Set<PracticeLocation>();
+    public DbSet<ProviderScheduleTemplate> ProviderScheduleTemplates => Set<ProviderScheduleTemplate>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -69,6 +70,18 @@ public class PracticeDbContext(DbContextOptions<PracticeDbContext> options) : Db
             .HasForeignKey(x => x.PracticeLocationId)
             .OnDelete(DeleteBehavior.Restrict);
 
+        modelBuilder.Entity<ProviderScheduleTemplate>()
+            .HasOne<Provider>()
+            .WithMany()
+            .HasForeignKey(x => x.ProviderId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<ProviderScheduleTemplate>()
+            .HasOne<PracticeLocation>()
+            .WithMany()
+            .HasForeignKey(x => x.PracticeLocationId)
+            .OnDelete(DeleteBehavior.Restrict);
+
         modelBuilder.Entity<PracticeLocation>()
             .HasOne<Tenant>()
             .WithMany()
@@ -110,6 +123,9 @@ public class PracticeDbContext(DbContextOptions<PracticeDbContext> options) : Db
 
         modelBuilder.Entity<PracticeLocation>()
             .HasIndex(x => new { x.TenantId, x.LocationName }).IsUnique();
+
+        modelBuilder.Entity<ProviderScheduleTemplate>()
+            .HasIndex(x => new { x.ProviderId, x.PracticeLocationId, x.DayOfWeek, x.StartTime, x.EndTime });
 
         modelBuilder.Entity<Address>()
             .HasIndex(x => new { x.AddressType, x.PhoneType, x.PostalCode });

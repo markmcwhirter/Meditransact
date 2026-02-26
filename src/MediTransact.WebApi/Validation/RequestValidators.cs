@@ -211,6 +211,35 @@ public sealed class UpdateInsuranceCarrierRequestValidator : Validator<UpdateIns
     }
 }
 
+
+public sealed class CreateProviderScheduleTemplateRequestValidator : Validator<CreateProviderScheduleTemplateRequest>
+{
+    public CreateProviderScheduleTemplateRequestValidator()
+    {
+        RuleFor(x => x.PracticeLocationId).NotEmpty();
+        RuleFor(x => x.DayOfWeek).IsInEnum();
+        RuleFor(x => x.EndTime).Must((x, end) => end > x.StartTime).WithMessage("EndTime must be greater than StartTime.");
+        RuleFor(x => x.EffectiveEndDate)
+            .GreaterThanOrEqualTo(x => x.EffectiveStartDate)
+            .When(x => x.EffectiveEndDate.HasValue)
+            .WithMessage("EffectiveEndDate must be greater than or equal to EffectiveStartDate.");
+    }
+}
+
+public sealed class UpdateProviderScheduleTemplateRequestValidator : Validator<UpdateProviderScheduleTemplateRequest>
+{
+    public UpdateProviderScheduleTemplateRequestValidator()
+    {
+        RuleFor(x => x.PracticeLocationId).NotEmpty();
+        RuleFor(x => x.DayOfWeek).IsInEnum();
+        RuleFor(x => x.EndTime).Must((x, end) => end > x.StartTime).WithMessage("EndTime must be greater than StartTime.");
+        RuleFor(x => x.EffectiveEndDate)
+            .GreaterThanOrEqualTo(x => x.EffectiveStartDate)
+            .When(x => x.EffectiveEndDate.HasValue)
+            .WithMessage("EffectiveEndDate must be greater than or equal to EffectiveStartDate.");
+    }
+}
+
 public sealed class ScheduleAppointmentRequestValidator : Validator<ScheduleAppointmentRequest>
 {
     public ScheduleAppointmentRequestValidator()

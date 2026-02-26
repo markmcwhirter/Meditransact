@@ -107,6 +107,39 @@ public class PracticeServiceTests
         repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
     }
 
+
+    [Fact]
+    public async Task ScheduleAppointment_ShouldPersist_WhenCoveredByProviderScheduleTemplate()
+    {
+        var patient = new Patient(
+            "Ana", "Marie", "Cole", new DateOnly(1990, 1, 1), "Female", "DriverLicense", "D123",
+            "Single", "ana@example.com",
+            "Acme Corp", "555-0202", "hr@acme.com", null, true, new DateOnly(2020, 1, 1), "English", "Hispanic",
+            false, null, "", [new Address(AddressType.Physical, "1 Main", "", "", "Austin", "TX", "78701", "555-0101", PhoneType.Primary)], []);
+        var provider = new Provider("Dr Smith", "Cardiology", "1234567890");
+        var location = new PracticeLocation(Guid.NewGuid(), "Main", "main@loc.com", "", true, [new Address(AddressType.Physical, "100 Main", "", "", "Austin", "TX", "78701", "555-2222", PhoneType.Primary)]);
+        var start = new DateTimeOffset(2026, 3, 2, 14, 0, 0, TimeSpan.Zero); // Monday
+        var end = start.AddMinutes(30);
+        var template = new ProviderScheduleTemplate(provider.Id, location.Id, DayOfWeek.Monday, new TimeOnly(13, 0), new TimeOnly(17, 0), new DateOnly(2026, 1, 1), null, true);
+
+        var repo = new Mock<IPracticeRepository>();
+        repo.Setup(r => r.GetPatientAsync(patient.Id, It.IsAny<CancellationToken>())).ReturnsAsync(patient);
+        repo.Setup(r => r.GetProviderAsync(provider.Id, It.IsAny<CancellationToken>())).ReturnsAsync(provider);
+        repo.Setup(r => r.GetPracticeLocationAsync(location.Id, It.IsAny<CancellationToken>())).ReturnsAsync(location);
+        repo.Setup(r => r.ListProviderScheduleTemplatesAsync(provider.Id, It.IsAny<CancellationToken>())).ReturnsAsync([template]);
+
+        var readModel = new Mock<IPracticeReadModel>();
+        var sut = new PracticeService(repo.Object, readModel.Object);
+
+        var result = await sut.ScheduleAppointmentAsync(
+            new ScheduleAppointmentRequest(patient.Id, provider.Id, location.Id, start, end, "Checkup"),
+            CancellationToken.None);
+
+        Assert.True(result.IsT0);
+        repo.Verify(r => r.AddAppointmentAsync(It.IsAny<Appointment>(), It.IsAny<CancellationToken>()), Times.Once);
+        repo.Verify(r => r.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once);
+    }
+
     [Fact]
     public async Task ScheduleAppointment_ShouldReturnNotFound_WhenLocationMissing()
     {

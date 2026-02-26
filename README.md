@@ -94,6 +94,8 @@ The platform now supports:
 - Multiple **charges per case**
 - Multiple **charge codes per charge** with units
 - Multiple **locations per practice tenant**
+- Practitioner schedule templates for location/time windows
+- Patient scheduling at a location with practitioner, start time, and end time
 - Tenant/location/patient/carrier address data normalized to a common address table (`Address`) with address type and phone type metadata
 - Charge dates: date of service, date of entry, date of billing
 - Claim metadata per charge: claim type, insurance plan, billing status
@@ -138,6 +140,13 @@ The API defines and enforces these JWT role values at endpoints:
 - `GET /api/practice/appointments/{id}`
 - `PUT /api/practice/appointments/{id}`
 - `DELETE /api/practice/appointments/{id}`
+
+### Practitioner Schedule Templates
+- `POST /api/practice/providers/{providerId}/schedule-templates`
+- `GET /api/practice/providers/{providerId}/schedule-templates`
+- `GET /api/practice/schedule-templates/{id}`
+- `PUT /api/practice/schedule-templates/{id}`
+- `DELETE /api/practice/schedule-templates/{id}`
 
 ### Invoices
 - `POST /api/practice/invoices`

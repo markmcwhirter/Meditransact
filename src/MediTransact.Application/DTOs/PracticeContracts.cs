@@ -208,6 +208,36 @@ public record PracticeLocationDto(
     string SecondaryEmail,
     bool IsActive);
 
+
+public record CreateProviderScheduleTemplateRequest(
+    Guid PracticeLocationId,
+    DayOfWeek DayOfWeek,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    DateOnly EffectiveStartDate,
+    DateOnly? EffectiveEndDate,
+    bool IsActive);
+
+public record UpdateProviderScheduleTemplateRequest(
+    Guid PracticeLocationId,
+    DayOfWeek DayOfWeek,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    DateOnly EffectiveStartDate,
+    DateOnly? EffectiveEndDate,
+    bool IsActive);
+
+public record ProviderScheduleTemplateDto(
+    Guid Id,
+    Guid ProviderId,
+    Guid PracticeLocationId,
+    DayOfWeek DayOfWeek,
+    TimeOnly StartTime,
+    TimeOnly EndTime,
+    DateOnly EffectiveStartDate,
+    DateOnly? EffectiveEndDate,
+    bool IsActive);
+
 public record RegisterProviderRequest(string FullName, string Specialty, string Npi);
 public record ScheduleAppointmentRequest(Guid PatientId, Guid ProviderId, Guid PracticeLocationId, DateTimeOffset StartTime, DateTimeOffset EndTime, string Reason);
 public record CreateInvoiceRequest(Guid PatientId, decimal TotalAmount, Guid? AppointmentId);

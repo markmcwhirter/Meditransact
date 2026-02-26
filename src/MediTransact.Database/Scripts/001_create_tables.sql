@@ -70,6 +70,24 @@ CREATE TABLE IF NOT EXISTS "InsuranceCarriers" (
   "AuthorizationEmail" text NOT NULL
 );
 
+
+CREATE TABLE IF NOT EXISTS "ProviderScheduleTemplates" (
+  "Id" uuid PRIMARY KEY,
+  "IsActive" boolean NOT NULL,
+  "IsDeleted" boolean NOT NULL DEFAULT FALSE,
+  "ProviderId" uuid NOT NULL,
+  "PracticeLocationId" uuid NOT NULL,
+  "DayOfWeek" integer NOT NULL,
+  "StartTime" time without time zone NOT NULL,
+  "EndTime" time without time zone NOT NULL,
+  "EffectiveStartDate" date NOT NULL,
+  "EffectiveEndDate" date NULL,
+  CONSTRAINT "FK_ProviderScheduleTemplates_Providers_ProviderId"
+    FOREIGN KEY ("ProviderId") REFERENCES "Providers"("Id") ON DELETE CASCADE,
+  CONSTRAINT "FK_ProviderScheduleTemplates_PracticeLocations_PracticeLocationId"
+    FOREIGN KEY ("PracticeLocationId") REFERENCES "PracticeLocations"("Id") ON DELETE RESTRICT
+);
+
 CREATE TABLE IF NOT EXISTS "Appointments" (
   "Id" uuid PRIMARY KEY,
   "IsActive" boolean NOT NULL DEFAULT TRUE,
@@ -208,6 +226,7 @@ CREATE UNIQUE INDEX IF NOT EXISTS "IX_ChargeCodeTypes_Name" ON "ChargeCodeTypes"
 CREATE UNIQUE INDEX IF NOT EXISTS "IX_SupportedInsurancePlans_InsuranceCarrierId_PlanCode" ON "SupportedInsurancePlans" ("InsuranceCarrierId", "PlanCode");
 
 CREATE INDEX IF NOT EXISTS "IX_Addresses_AddressType_PhoneType_PostalCode" ON "Addresses" ("AddressType", "PhoneType", "PostalCode");
+CREATE INDEX IF NOT EXISTS "IX_ProviderScheduleTemplates_ProviderId_PracticeLocationId_DayOfWeek_StartTime_EndTime" ON "ProviderScheduleTemplates" ("ProviderId", "PracticeLocationId", "DayOfWeek", "StartTime", "EndTime");
 CREATE INDEX IF NOT EXISTS "IX_PatientInsurancePlans_PatientId_InsuranceCarrierId_MemberNumber" ON "PatientInsurancePlans" ("PatientId", "InsuranceCarrierId", "MemberNumber");
 CREATE INDEX IF NOT EXISTS "IX_CaseChargeCodes_CaseChargeId_ChargeCodeTypeId_Code" ON "CaseChargeCodes" ("CaseChargeId", "ChargeCodeTypeId", "Code");
 

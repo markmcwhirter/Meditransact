@@ -45,11 +45,76 @@ public class PracticeService(IPracticeRepository repository, IPracticeReadModel 
         return provider.Id;
     }
 
+
+    public async Task<OneOf<Guid, AppError>> CreateProviderScheduleTemplateAsync(Guid providerId, CreateProviderScheduleTemplateRequest request, CancellationToken ct)
+    {
+        if (await repository.GetProviderAsync(providerId, ct) is null) return NotFound("provider.not_found", "Provider not found");
+        if (await repository.GetPracticeLocationAsync(request.PracticeLocationId, ct) is null) return NotFound("practice_location.not_found", "Practice location not found");
+
+        var template = new ProviderScheduleTemplate(
+            providerId,
+            request.PracticeLocationId,
+            request.DayOfWeek,
+            request.StartTime,
+            request.EndTime,
+            request.EffectiveStartDate,
+            request.EffectiveEndDate,
+            request.IsActive);
+
+        await repository.AddProviderScheduleTemplateAsync(template, ct);
+        await repository.SaveChangesAsync(ct);
+        return template.Id;
+    }
+
+    public async Task<OneOf<List<ProviderScheduleTemplateDto>, AppError>> ListProviderScheduleTemplatesAsync(Guid providerId, CancellationToken ct)
+    {
+        if (await repository.GetProviderAsync(providerId, ct) is null) return NotFound("provider.not_found", "Provider not found");
+        return (await repository.ListProviderScheduleTemplatesAsync(providerId, ct)).Select(Map).ToList();
+    }
+
+    public async Task<OneOf<ProviderScheduleTemplateDto, AppError>> GetProviderScheduleTemplateByIdAsync(Guid id, CancellationToken ct)
+    {
+        var template = await repository.GetProviderScheduleTemplateAsync(id, ct);
+        return template is null ? NotFound("provider_schedule_template.not_found", "Provider schedule template not found") : Map(template);
+    }
+
+    public async Task<OneOf<Success, AppError>> UpdateProviderScheduleTemplateAsync(Guid id, UpdateProviderScheduleTemplateRequest request, CancellationToken ct)
+    {
+        var template = await repository.GetProviderScheduleTemplateAsync(id, ct);
+        if (template is null) return NotFound("provider_schedule_template.not_found", "Provider schedule template not found");
+        if (await repository.GetPracticeLocationAsync(request.PracticeLocationId, ct) is null) return NotFound("practice_location.not_found", "Practice location not found");
+
+        template.Update(
+            request.PracticeLocationId,
+            request.DayOfWeek,
+            request.StartTime,
+            request.EndTime,
+            request.EffectiveStartDate,
+            request.EffectiveEndDate,
+            request.IsActive);
+
+        await repository.SaveChangesAsync(ct);
+        return new Success();
+    }
+
+    public async Task<OneOf<Success, AppError>> DeleteProviderScheduleTemplateAsync(Guid id, CancellationToken ct)
+    {
+        var template = await repository.GetProviderScheduleTemplateAsync(id, ct);
+        if (template is null) return NotFound("provider_schedule_template.not_found", "Provider schedule template not found");
+        repository.RemoveProviderScheduleTemplate(template);
+        await repository.SaveChangesAsync(ct);
+        return new Success();
+    }
+
     public async Task<OneOf<Guid, AppError>> ScheduleAppointmentAsync(ScheduleAppointmentRequest request, CancellationToken ct)
     {
         if (await repository.GetPatientAsync(request.PatientId, ct) is null) return NotFound("patient.not_found", "Patient not found");
         if (await repository.GetProviderAsync(request.ProviderId, ct) is null) return NotFound("provider.not_found", "Provider not found");
         if (await repository.GetPracticeLocationAsync(request.PracticeLocationId, ct) is null) return NotFound("practice_location.not_found", "Practice location not found");
+
+        var templates = await repository.ListProviderScheduleTemplatesAsync(request.ProviderId, ct);
+        var hasCoverage = templates.Any(x => x.IsActive && !x.IsDeleted && x.PracticeLocationId == request.PracticeLocationId && x.Covers(request.StartTime, request.EndTime));
+        if (!hasCoverage) return NotFound("provider_schedule_template.not_available", "No active practitioner schedule template covers this appointment window at the location");
 
         var appt = new Appointment(request.PatientId, request.ProviderId, request.PracticeLocationId, request.StartTime, request.EndTime, request.Reason);
         await repository.AddAppointmentAsync(appt, ct);
@@ -261,6 +326,11 @@ public class PracticeService(IPracticeRepository repository, IPracticeReadModel 
         if (await repository.GetPatientAsync(request.PatientId, ct) is null) return NotFound("patient.not_found", "Patient not found");
         if (await repository.GetProviderAsync(request.ProviderId, ct) is null) return NotFound("provider.not_found", "Provider not found");
         if (await repository.GetPracticeLocationAsync(request.PracticeLocationId, ct) is null) return NotFound("practice_location.not_found", "Practice location not found");
+
+        var templates = await repository.ListProviderScheduleTemplatesAsync(request.ProviderId, ct);
+        var hasCoverage = templates.Any(x => x.IsActive && !x.IsDeleted && x.PracticeLocationId == request.PracticeLocationId && x.Covers(request.StartTime, request.EndTime));
+        if (!hasCoverage) return NotFound("provider_schedule_template.not_available", "No active practitioner schedule template covers this appointment window at the location");
+
         var appointment = await repository.GetAppointmentAsync(id, ct);
         if (appointment is null) return NotFound("appointment.not_found", "Appointment not found");
         appointment.Update(request.PatientId, request.ProviderId, request.PracticeLocationId, request.StartTime, request.EndTime, request.Reason, request.Status);
@@ -499,6 +569,7 @@ public class PracticeService(IPracticeRepository repository, IPracticeReadModel 
         c.SupportedPlans.Select(x => new SupportedPlanDto(x.Id, x.PlanCode, x.PlanName, x.IsActive)).ToList());
 
     private static ProviderDto Map(Provider p) => new(p.Id, p.FullName, p.Specialty, p.Npi);
+    private static ProviderScheduleTemplateDto Map(ProviderScheduleTemplate t) => new(t.Id, t.ProviderId, t.PracticeLocationId, t.DayOfWeek, t.StartTime, t.EndTime, t.EffectiveStartDate, t.EffectiveEndDate, t.IsActive);
     private static TenantDto Map(Tenant t) => new(t.Id, t.Name, GetAddressLine1(t.Addresses, AddressType.Physical), GetAddressLine2(t.Addresses, AddressType.Physical), GetAddressCity(t.Addresses, AddressType.Physical), GetAddressState(t.Addresses, AddressType.Physical), GetAddressPostalCode(t.Addresses, AddressType.Physical), GetAddressLine1(t.Addresses, AddressType.Billing), GetAddressLine2(t.Addresses, AddressType.Billing), GetAddressCity(t.Addresses, AddressType.Billing), GetAddressState(t.Addresses, AddressType.Billing), GetAddressPostalCode(t.Addresses, AddressType.Billing), GetAddressPhone(t.Addresses, AddressType.Physical, PhoneType.Primary), GetAddressPhone(t.Addresses, AddressType.Billing, PhoneType.Secondary), t.PrimaryEmail, t.SecondaryEmail);
     private static PracticeLocationDto Map(PracticeLocation l) => new(l.Id, l.TenantId, l.LocationName, GetAddressLine1(l.Addresses, AddressType.Physical), GetAddressLine2(l.Addresses, AddressType.Physical), GetAddressCity(l.Addresses, AddressType.Physical), GetAddressState(l.Addresses, AddressType.Physical), GetAddressPostalCode(l.Addresses, AddressType.Physical), GetAddressLine1(l.Addresses, AddressType.Billing), GetAddressLine2(l.Addresses, AddressType.Billing), GetAddressCity(l.Addresses, AddressType.Billing), GetAddressState(l.Addresses, AddressType.Billing), GetAddressPostalCode(l.Addresses, AddressType.Billing), GetAddressPhone(l.Addresses, AddressType.Physical, PhoneType.Primary), GetAddressPhone(l.Addresses, AddressType.Billing, PhoneType.Secondary), l.PrimaryEmail, l.SecondaryEmail, l.IsActive);
     private static AppointmentDto Map(Appointment a) => new(a.Id, a.PatientId, a.ProviderId, a.PracticeLocationId, a.StartTime, a.EndTime, a.Reason, a.Status);

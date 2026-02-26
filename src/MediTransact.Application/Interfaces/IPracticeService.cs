@@ -22,6 +22,11 @@ public interface IPracticeService
     Task<OneOf<Success, AppError>> DeletePracticeLocationAsync(Guid id, CancellationToken ct);
 
     Task<OneOf<Guid, AppError>> RegisterProviderAsync(RegisterProviderRequest request, CancellationToken ct);
+    Task<OneOf<Guid, AppError>> CreateProviderScheduleTemplateAsync(Guid providerId, CreateProviderScheduleTemplateRequest request, CancellationToken ct);
+    Task<OneOf<List<ProviderScheduleTemplateDto>, AppError>> ListProviderScheduleTemplatesAsync(Guid providerId, CancellationToken ct);
+    Task<OneOf<ProviderScheduleTemplateDto, AppError>> GetProviderScheduleTemplateByIdAsync(Guid id, CancellationToken ct);
+    Task<OneOf<Success, AppError>> UpdateProviderScheduleTemplateAsync(Guid id, UpdateProviderScheduleTemplateRequest request, CancellationToken ct);
+    Task<OneOf<Success, AppError>> DeleteProviderScheduleTemplateAsync(Guid id, CancellationToken ct);
     Task<OneOf<Guid, AppError>> ScheduleAppointmentAsync(ScheduleAppointmentRequest request, CancellationToken ct);
     Task<OneOf<Guid, AppError>> CreateInvoiceAsync(CreateInvoiceRequest request, CancellationToken ct);
     Task<OneOf<Success, AppError>> RecordPaymentAsync(RecordPaymentRequest request, CancellationToken ct);

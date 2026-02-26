@@ -196,6 +196,34 @@ public class UpdateProviderEndpoint(IPracticeService service) : Endpoint<UpdateP
 public class DeleteProviderEndpoint(IPracticeService service) : EndpointWithoutRequest
 { public override void Configure() { Delete("/api/practice/providers/{id:guid}"); Roles(AuthRoles.AllRoles); } public override async Task HandleAsync(CancellationToken ct){var r=await service.DeleteProviderAsync(Route<Guid>("id"),ct); if(r.IsT0) await SendNoContentAsync(ct); else await SendAsync(r.AsT1,r.AsT1.ToStatusCode(),ct);} }
 
+
+public class CreateProviderScheduleTemplateEndpoint(IPracticeService service) : Endpoint<CreateProviderScheduleTemplateRequest>
+{
+    public override void Configure() { Post("/api/practice/providers/{providerId:guid}/schedule-templates"); Roles(AuthRoles.AllRoles); }
+    public override async Task HandleAsync(CreateProviderScheduleTemplateRequest req, CancellationToken ct)
+    {
+        var r = await service.CreateProviderScheduleTemplateAsync(Route<Guid>("providerId"), req, ct);
+        if (r.IsT0) await SendAsync(r.AsT0, 200, ct); else await SendAsync(r.AsT1, r.AsT1.ToStatusCode(), ct);
+    }
+}
+
+public class ListProviderScheduleTemplatesEndpoint(IPracticeService service) : EndpointWithoutRequest<object>
+{
+    public override void Configure() { Get("/api/practice/providers/{providerId:guid}/schedule-templates"); Roles(AuthRoles.AllRoles); }
+    public override async Task HandleAsync(CancellationToken ct)
+    {
+        var r = await service.ListProviderScheduleTemplatesAsync(Route<Guid>("providerId"), ct);
+        if (r.IsT0) await SendAsync(r.AsT0, 200, ct); else await SendAsync(r.AsT1, r.AsT1.ToStatusCode(), ct);
+    }
+}
+
+public class GetProviderScheduleTemplateEndpoint(IPracticeService service) : EndpointWithoutRequest<object>
+{ public override void Configure() { Get("/api/practice/schedule-templates/{id:guid}"); Roles(AuthRoles.AllRoles); } public override async Task HandleAsync(CancellationToken ct){var r=await service.GetProviderScheduleTemplateByIdAsync(Route<Guid>("id"),ct); if(r.IsT0) await SendAsync(r.AsT0,200,ct); else await SendAsync(r.AsT1,r.AsT1.ToStatusCode(),ct);} }
+public class UpdateProviderScheduleTemplateEndpoint(IPracticeService service) : Endpoint<UpdateProviderScheduleTemplateRequest>
+{ public override void Configure() { Put("/api/practice/schedule-templates/{id:guid}"); Roles(AuthRoles.AllRoles); } public override async Task HandleAsync(UpdateProviderScheduleTemplateRequest req, CancellationToken ct){var r=await service.UpdateProviderScheduleTemplateAsync(Route<Guid>("id"),req,ct); if(r.IsT0) await SendNoContentAsync(ct); else await SendAsync(r.AsT1,r.AsT1.ToStatusCode(),ct);} }
+public class DeleteProviderScheduleTemplateEndpoint(IPracticeService service) : EndpointWithoutRequest
+{ public override void Configure() { Delete("/api/practice/schedule-templates/{id:guid}"); Roles(AuthRoles.AllRoles); } public override async Task HandleAsync(CancellationToken ct){var r=await service.DeleteProviderScheduleTemplateAsync(Route<Guid>("id"),ct); if(r.IsT0) await SendNoContentAsync(ct); else await SendAsync(r.AsT1,r.AsT1.ToStatusCode(),ct);} }
+
 public class ScheduleAppointmentEndpoint(IPracticeService service) : PracticeEndpoint<ScheduleAppointmentRequest>(service)
 { public override void Configure() { Post("/api/practice/appointments"); Roles(AuthRoles.AllRoles); } public override async Task HandleAsync(ScheduleAppointmentRequest req, CancellationToken ct) => await SendResultAsync(await Service.ScheduleAppointmentAsync(req, ct), ct); }
 public class ListAppointmentsEndpoint(IPracticeService service) : PracticeEndpointWithoutRequest(service)

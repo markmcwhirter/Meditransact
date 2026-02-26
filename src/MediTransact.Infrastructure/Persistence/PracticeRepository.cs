@@ -21,6 +21,7 @@ public class PracticeRepository(IDbContextFactory<PracticeDbContext> dbContextFa
     public Task AddChargeCodeTypeAsync(ChargeCodeType chargeCodeType, CancellationToken ct) => _db.ChargeCodeTypes.AddAsync(chargeCodeType, ct).AsTask();
     public Task AddTenantAsync(Tenant tenant, CancellationToken ct) => _db.Tenants.AddAsync(tenant, ct).AsTask();
     public Task AddPracticeLocationAsync(PracticeLocation location, CancellationToken ct) => _db.PracticeLocations.AddAsync(location, ct).AsTask();
+    public Task AddProviderScheduleTemplateAsync(ProviderScheduleTemplate template, CancellationToken ct) => _db.ProviderScheduleTemplates.AddAsync(template, ct).AsTask();
 
     public Task<Patient?> GetPatientAsync(Guid id, CancellationToken ct) => _db.Patients.Include(x => x.Addresses).Include(x => x.InsurancePlans).FirstOrDefaultAsync(x => x.Id == id, ct);
     public Task<Provider?> GetProviderAsync(Guid id, CancellationToken ct) => _db.Providers.FirstOrDefaultAsync(x => x.Id == id, ct);
@@ -32,6 +33,7 @@ public class PracticeRepository(IDbContextFactory<PracticeDbContext> dbContextFa
     public Task<ChargeCodeType?> GetChargeCodeTypeAsync(Guid id, CancellationToken ct) => _db.ChargeCodeTypes.FirstOrDefaultAsync(x => x.Id == id, ct);
     public Task<Tenant?> GetTenantAsync(Guid id, CancellationToken ct) => _db.Tenants.Include(x => x.Addresses).FirstOrDefaultAsync(x => x.Id == id, ct);
     public Task<PracticeLocation?> GetPracticeLocationAsync(Guid id, CancellationToken ct) => _db.PracticeLocations.Include(x => x.Addresses).FirstOrDefaultAsync(x => x.Id == id, ct);
+    public Task<ProviderScheduleTemplate?> GetProviderScheduleTemplateAsync(Guid id, CancellationToken ct) => _db.ProviderScheduleTemplates.FirstOrDefaultAsync(x => x.Id == id, ct);
 
     public Task<List<Patient>> ListPatientsAsync(CancellationToken ct) => _db.Patients.Include(x => x.Addresses).Include(x => x.InsurancePlans).OrderBy(x => x.LastName).ThenBy(x => x.FirstName).ToListAsync(ct);
     public Task<List<Provider>> ListProvidersAsync(CancellationToken ct) => _db.Providers.OrderBy(x => x.FullName).ToListAsync(ct);
@@ -43,6 +45,7 @@ public class PracticeRepository(IDbContextFactory<PracticeDbContext> dbContextFa
     public Task<List<ChargeCodeType>> ListChargeCodeTypesAsync(CancellationToken ct) => _db.ChargeCodeTypes.OrderBy(x => x.Name).ToListAsync(ct);
     public Task<List<Tenant>> ListTenantsAsync(CancellationToken ct) => _db.Tenants.Include(x => x.Addresses).OrderBy(x => x.Name).ToListAsync(ct);
     public Task<List<PracticeLocation>> ListPracticeLocationsAsync(Guid tenantId, CancellationToken ct) => _db.PracticeLocations.Include(x => x.Addresses).Where(x => x.TenantId == tenantId).OrderBy(x => x.LocationName).ToListAsync(ct);
+    public Task<List<ProviderScheduleTemplate>> ListProviderScheduleTemplatesAsync(Guid providerId, CancellationToken ct) => _db.ProviderScheduleTemplates.Where(x => x.ProviderId == providerId).OrderBy(x => x.DayOfWeek).ThenBy(x => x.StartTime).ToListAsync(ct);
 
     public void RemovePatient(Patient patient) => _db.Patients.Remove(patient);
     public void RemoveProvider(Provider provider) => _db.Providers.Remove(provider);
@@ -54,6 +57,7 @@ public class PracticeRepository(IDbContextFactory<PracticeDbContext> dbContextFa
     public void RemoveChargeCodeType(ChargeCodeType chargeCodeType) => _db.ChargeCodeTypes.Remove(chargeCodeType);
     public void RemoveTenant(Tenant tenant) => _db.Tenants.Remove(tenant);
     public void RemovePracticeLocation(PracticeLocation location) => _db.PracticeLocations.Remove(location);
+    public void RemoveProviderScheduleTemplate(ProviderScheduleTemplate template) => _db.ProviderScheduleTemplates.Remove(template);
 
     public Task SaveChangesAsync(CancellationToken ct) => _db.SaveChangesAsync(ct);
 
