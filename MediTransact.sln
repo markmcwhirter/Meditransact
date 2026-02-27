@@ -1,0 +1,22 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.0.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.Domain", "src/MediTransact.Domain/MediTransact.Domain.csproj", "{4E7844CB-D7CC-4608-983D-6A39262A1437}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.Application", "src/MediTransact.Application/MediTransact.Application.csproj", "{AB0CD8C8-0C80-4069-8336-464D4430A716}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.Infrastructure", "src/MediTransact.Infrastructure/MediTransact.Infrastructure.csproj", "{3CE0AA7A-6575-42F4-B3B9-5AF876B10EE6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.WebApi", "src/MediTransact.WebApi/MediTransact.WebApi.csproj", "{4DB6BC8D-7DE5-474A-81CB-9D9C8A04D346}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.UnitTests", "tests/MediTransact.UnitTests/MediTransact.UnitTests.csproj", "{D5D6B809-3F04-4E0A-A96F-3AA661A6A182}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MediTransact.Database", "src/MediTransact.Database/MediTransact.Database.csproj", "{39BDA546-EC1A-4E77-889B-BD197665E4E5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+EndGlobal
